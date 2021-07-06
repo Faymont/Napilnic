@@ -7,11 +7,12 @@ namespace Napilnik
         private const int PlayerHealth = 100;
         private const int WeaponDamage = 20;
         private const int MaxWeaponAmmo = 10;
+        private const int WeaponShotCost = 1;
 
         static void Main(string[] args)
         {
             var player = new Player(PlayerHealth);
-            var weapon = new Weapon(WeaponDamage, MaxWeaponAmmo);
+            var weapon = new Weapon(WeaponDamage, MaxWeaponAmmo, WeaponShotCost);
             var bot = new Bot(weapon);
             bot.OnSeePlayer(player);
         }
@@ -22,10 +23,11 @@ namespace Napilnik
         public int Damage { get; private set; }
         public int Ammo { get; private set; }
         public int MaxAmmo { get; private set; }
+        public int ShotCost { get; private set; }
 
-        public event Action OnFire;
+        public event Action OnFired;
 
-        public Weapon(int damage, int maxAmmo)
+        public Weapon(int damage, int maxAmmo, int shotCost)
         {
             if (damage <= 0)
             {
@@ -37,30 +39,37 @@ namespace Napilnik
                 throw new ArgumentOutOfRangeException(nameof(maxAmmo));
             }
 
+            if (shotCost <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(shotCost));
+            }
+            
             Damage = damage;
             Ammo = maxAmmo;
+            ShotCost = shotCost;
         }
 
         public void Fire(IDamageable damageable)
         {
             if (!CanFire())
             {
-                return;
+                throw new InvalidOperationException();
             }
 
             damageable.TakeDamage(Damage);
-            Ammo -= 1;
+            Ammo -= ShotCost;
 
-            OnFire?.Invoke();
+            OnFired?.Invoke();
         }
 
         public void Reload()
         {
             Ammo = MaxAmmo;
         }
+
         public bool CanFire()
         {
-            return Ammo > 0;
+            return Ammo - ShotCost > 0;
         }
     }
 
@@ -68,9 +77,6 @@ namespace Napilnik
     {
         public float Health { get; private set; }
         public float MaxHealth { get; private set; }
-
-        public event Action OnDie;
-        public event Action OnTakeDamage;
 
         public Player(float maxHealth)
         {
@@ -91,19 +97,12 @@ namespace Napilnik
             }
 
             Health = Math.Clamp(Health - damage, 0, MaxHealth);
-
-            OnTakeDamage?.Invoke();
-
-            if (Health == 0)
-            {
-                OnDie?.Invoke();
-            }
         }
     }
 
     public class Bot
     {
-        public Weapon Weapon { get; private set; }
+        public readonly Weapon Weapon;
 
         public Bot(Weapon weapon)
         {
