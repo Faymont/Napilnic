@@ -1,18 +1,20 @@
 ﻿using System;
+using System.IO.Compression;
 
 namespace Napilnik
 {
     class Program
     {
+
         private const int PlayerHealth = 100;
         private const int WeaponDamage = 20;
         private const int MaxWeaponAmmo = 10;
-        private const int WeaponShotCost = 1;
+        private const int BulletsPerShot = 1;
 
         static void Main(string[] args)
         {
             var player = new Player(PlayerHealth);
-            var weapon = new Weapon(WeaponDamage, MaxWeaponAmmo, WeaponShotCost);
+            var weapon = new Weapon(WeaponDamage, MaxWeaponAmmo, BulletsPerShot);
             var bot = new Bot(weapon);
             bot.OnSeePlayer(player);
         }
@@ -20,33 +22,28 @@ namespace Napilnik
 
     public class Weapon
     {
-        public int Damage { get; private set; }
+        public readonly int Damage;
+        public readonly int MaxAmmo;
+        public readonly int BulletsPerShot;
         public int Ammo { get; private set; }
-        public int MaxAmmo { get; private set; }
-        public int ShotCost { get; private set; }
 
         public event Action OnFired;
 
-        public Weapon(int damage, int maxAmmo, int shotCost)
+        public Weapon(int damage, int maxAmmo, int bulletsPerShot)
         {
             if (damage <= 0)
-            {
                 throw new ArgumentOutOfRangeException(nameof(damage));
-            }
 
             if (maxAmmo <= 0)
-            {
                 throw new ArgumentOutOfRangeException(nameof(maxAmmo));
-            }
 
-            if (shotCost <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(shotCost));
-            }
-            
+            if (bulletsPerShot <= 0)
+                throw new ArgumentOutOfRangeException(nameof(bulletsPerShot));
+
             Damage = damage;
             Ammo = maxAmmo;
-            ShotCost = shotCost;
+            MaxAmmo = maxAmmo;
+            BulletsPerShot = bulletsPerShot;
         }
 
         public void Fire(IDamageable damageable)
@@ -57,7 +54,7 @@ namespace Napilnik
             }
 
             damageable.TakeDamage(Damage);
-            Ammo -= ShotCost;
+            Ammo -= BulletsPerShot;
 
             OnFired?.Invoke();
         }
@@ -69,7 +66,7 @@ namespace Napilnik
 
         public bool CanFire()
         {
-            return Ammo - ShotCost > 0;
+            return Ammo - BulletsPerShot > 0;
         }
     }
 
