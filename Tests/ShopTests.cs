@@ -30,7 +30,7 @@ namespace Tests
 			Shop shop = new Shop(warehouse);
 
 			// Act.
-			var isContain = shop.Contain(good, 1);
+			var isContain = shop.Contains(good, 1);
 
 			// Assert.
 			isContain.Should().Be(true);
@@ -46,8 +46,8 @@ namespace Tests
 			Shop shop = new Shop(warehouse);
 
 			// Act.
-			shop.GetGood(good, 5);
-			var isContain = shop.Contain(good, 1);
+			shop.ReserveGood(good, 5);
+			var isContain = shop.Contains(good, 1);
 
 			// Assert.
 			isContain.Should().Be(false);

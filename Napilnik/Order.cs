@@ -14,12 +14,12 @@ public class UserOrder
 
 public class GoodOrder
 {
-	public Good good;
-	public int count;
+	public readonly Good Good;
+	public int Count;
 
 	public GoodOrder(Good good, int count)
 	{
-		this.good = good;
-		this.count = count;
+		Good = good;
+		Count = count;
 	}
 }

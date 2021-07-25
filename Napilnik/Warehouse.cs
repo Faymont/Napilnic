@@ -24,7 +24,7 @@ public class Warehouse
 		_goods[id] = count;
 	}
 
-	public void GetGood(Good good, int count)
+	public void ReserveGood(Good good, int count)
 	{
 		ValidateArguments(good, count);
 

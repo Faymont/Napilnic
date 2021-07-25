@@ -97,7 +97,7 @@ namespace Tests
 			warehouse.Deliver(good, 10);
 
 			// Act.
-			warehouse.GetGood(good, 4);
+			warehouse.ReserveGood(good, 4);
 
 			// Assert.
 			warehouse.Goods[good.Id].Should().Be(6);
@@ -112,7 +112,7 @@ namespace Tests
 			warehouse.Deliver(good, 10);
 
 			// Act.
-			Action act = () => warehouse.GetGood(good, 15);
+			Action act = () => warehouse.ReserveGood(good, 15);
 
 			// Assert.
 			act.Should().Throw<ArgumentException>();

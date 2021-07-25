@@ -14,13 +14,13 @@ public class Shop
 		return new Cart(this);
 	}
 
-	public bool Contain(Good good, int count)
+	public bool Contains(Good good, int count)
 	{
 		return _warehouse.Contain(good, count);
 	}
 
-	public void GetGood(Good good, int count)
+	public void ReserveGood(Good good, int count)
 	{
-		_warehouse.GetGood(good, count);
+		_warehouse.ReserveGood(good, count);
 	}
 }
